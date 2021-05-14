@@ -1,20 +1,50 @@
-import "../styles/global.scss";
-
 import { Header } from "../components/Header";
 import { Player } from "../components/Player";
+import { PlayerContext } from "../contexts/PlayerContext";
+import { useState } from "react";
+
 import styles from "../styles/app.module.scss";
+import "../styles/global.scss";
+
+// dentro de app colocamos tudo que eh comum a todas as paginas.
+// os componentes aparecerao em todas as telas
 
 function MyApp({ Component, pageProps }) {
-  // dentro de app colocamos tudo que eh comum a todas as paginas.
-  // os componentes aparecerao em todas as telas
+  const [episodeList, setEpisodeList] = useState([]);
+  const [currentEpisodeIndex, setCurrentEpisodeIndex] = useState(0);
+  const [ isPlaying, setIsPlaying ] = useState(false);
+
+  function play(episode) {
+    setEpisodeList([episode]);
+    setCurrentEpisodeIndex(0);
+    setIsPlaying(true);
+  }
+
+  function togglePlay() {
+    setIsPlaying(!isPlaying);
+  }
+
+  function setPlayingState(state: boolean) {
+    setIsPlaying(state);
+  }
+
   return (
-    <div className={styles.appWrapper}>
-      <main>
-        <Header />
-        <Component {...pageProps} />
-      </main>
-      <Player />
-    </div>
+    <PlayerContext.Provider value = {{ 
+      episodeList, 
+      currentEpisodeIndex, 
+      play, 
+      isPlaying, 
+      togglePlay, 
+      setPlayingState 
+    }}>
+      <div className={styles.appWrapper}>
+        <main>
+          <Header />
+          <Component {...pageProps} />
+        </main>
+        <Player />
+      </div>
+    </PlayerContext.Provider>
   );
 }
 
